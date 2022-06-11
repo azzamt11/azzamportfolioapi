@@ -1,9 +1,10 @@
 const express= require('express');
 const router= express.Router();
-const Comment= require('../commentsModel');
+const {Comment, validateComment}= require('../commentsModel');
 
 //POST: CREATE A NEW COMMENT
-router.post('/', (req, res)=> {
+router.post('/', async (req, res)=> {
+    const message = await validateComment(req.body);
     comment= new Comment({
         commentbody:req.body.commentBody,
         commenttype:req.body.commentType
@@ -13,6 +14,11 @@ router.post('/', (req, res)=> {
     }).catch(error=> {
         res.status(500).send("Comment was not stored")
     });
+});
+
+//GET:
+router.get('/', (req, res)=> {
+    Comment.find().then(comments=> res.send(comments)).catch(error=> {res.status(500).send('womething went wrong')});
 });
 
 module.exports= router;

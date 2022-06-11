@@ -1,4 +1,5 @@
 const mongoose= require('mongoose');
+const yup = require('yup');
 
 //comments schema
 const CommentSchema= new mongoose.Schema({
@@ -6,4 +7,13 @@ const CommentSchema= new mongoose.Schema({
     commenttype: {type:Number, required:true}
 });
 
-module.exports= new mongoose.model('Comment', CommentSchema);
+const validateComment= comment=> {
+    const schema= yup.object().shape({
+        commentBody:yup.string().required().min(1).max(1000),
+        commentType:yup.number().required().max(1)
+    });
+    return schema.validate(comment).then(comment=> comment).catch(error => console.log(error));
+}
+
+exports.Comment= new mongoose.model('Comment', CommentSchema);
+exports.validateComment= validateComment;
